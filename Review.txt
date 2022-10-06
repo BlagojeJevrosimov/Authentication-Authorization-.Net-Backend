@@ -1,0 +1,44 @@
+The general impression of the intern's knowledge at the beginning of the internship: 
+
+Praktikantovo znanje o tehnologiji u kojoj je radio projekat je na pocetku bilo okej, nije imao previse iskustva sa njom, upoznat je bio sa osnovama, ali je prethodno radio u slicnim tehnologijama, pa je sa zajednickim stvarima vec bio dobro upoznat. Takodje, pored praktikantovog znanja, njegova snalzaljivost je bila dobra.
+
+Clean code: 9
+
+Object calisthenics: 8
+
+Maintainability: 8
+
+Best practices for given framework / language: 8
+
+List the main positive things about the code that you are reviewing: 
+
+-Kod je vecinom funkcionalan i poprilicno cist
+
+-ADO.NET deo je super odrađen
+
+-Struktura projekta je dobra
+List the main negative things about the code that you are reviewing: 
+
+-Nekorisceni usings na nekim mestima
+-Nedostatak Attributes foldera/namespace-a u kom bi trebao da se nalazi UserAuthorizationAttribute
+-Deo logike iz Controller metode GetPlatformCredentialsByUserIdAll bi trebao da se nalazi u Service metodi
+-Na par mesta u Controller-ima se za povratni tip koriste entitet klase iz DAL layer-a, umesto kojih be trebao da se koristi DTO cija polja bi reflektovala vrednosti iz entitet klase (onda ne bi bilo potrebe za postavljanje Password i SecretId-a na prazan string kod User-a) - npr. ovo pravi problem sa logikom za dodavanje PlatformCredential-a, jer se u Service metodi ocekuje da je prosledjen UserId za PlatformCredentials, iako se on vec uzima taj podatak iz JWT-a (treba da postoji npr. PlatformCredentialCreateDTO koji bi imao samo polja koja User treba da unese (Name, Username, Password))
+-Nije handle-ovan slucaj kada je JWT null
+-U EncryptionHelper-u ima par promenljivih koje su deklarisane na pocetku metode, za cim nema potrebe posto im se vrednost postavlja samo jednom i to tek kasnije u metodi, kao i promenljiva koja se nigde ne koristi
+-Na par mesta postoje po dva uslova podeljena u dva if-a, a koji su mogli da se ubace u jedan if i razdvoje sa &&
+-U Service metodi GetPlatformCredentialPasswordById je na jednom mestu izostavljen throw keyword ispred new BusinessException
+-Na par mesta se ne koristi "happy path", npr u Service metodi GetPlatformCredentialPasswordById se u if-u proverava da li se uneta sifra poklapa sa sifrom User-a, i ako je uslov tacan, onda se izvrsava logika, a ako nije, baca se BusinessException - ovo bi bilo bolje da je obrnuto, jer se onda izbegava if blok, kao i koriscenje else-a, i kod ce se prekinuti samo ako se taj uslov ispuni, u suprotnom ce nastaviti sa izvrsavanjem logike koja je trenutno u if bloku (rezultat je pregledniji i smisleniji kod)
+-Nedostatak Mapper-a (nisu preko potrebni, ali bi kod u Service-ima bio cistiji uz njih)
+-Nepostojanje validacije za DTO polja, sto uzrokuje internal server error-e kada se neki parametar ne prosledi
+-Sifra se ne hash-ira prilikom update-a User-a
+-Sva string polja u entitet klasama su nullable, iako su polja u bazi na osnovu kojih su klase napravljene not nullable
+-Enums klasa nije preimenovana u Role
+-Kod dodeljivanja command.CommandText u Repository metodama je umesto poziva Insert metode mogla da se iskoristi + operator za konkatenaciju string-ova
+-Connection string postoji i dodeljuje se u svakom Repository-u posebno, a moze biti protected polje u BaseRepository klasi i tu da mu se i dodeljuje vrednost, pa se time gubi potreba za dupliranjem
+-Connection string se ne iscitava iz appsettings-a i pojavljuje se na vise mesta kao string literal
+
+The general impression of the intern's knowledge at the end of the internship: 
+
+Praktikant je nakon prakse dobro unapredio svoje znanje iz date tehnologije, ali sto je jos bitnije, dosta je unapredio svoje vestine resavanja problema time sto je pokusao sve sam da resi, i trazio je pomoc samo kad bas zakoci, iako bi mozda bilo bolje da me je malo vise kontaktirao, ali je svakako super sto je postao snalazljiviji.
+
+Iako izgleda kao da ima dosta negativnih stvar, vecina su zapravo sitne stvari koje se mogu resiti za par minuta svaka (stoga sam ih ispisao sve da bi praktikant znao za sledeci projekat), i projekat je generalno super odradjen. 
